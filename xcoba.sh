@@ -2,3 +2,4 @@
 echo "apa kabar"
 pm2 -v
 htop
+touch index.html
