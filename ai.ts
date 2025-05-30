@@ -1,4 +1,4 @@
-const [host] = process.argv.slice(2);
+sesuaikan const [host] = process.argv.slice(2);
 if (!host) {
   throw new Error("Host is required");
 }
@@ -13,11 +13,13 @@ interface Agent {
 const AGENTS: Agent[] = [
   {
     id: "agen-1",
-    context: "Kamu adalah agen AI yang penasaran, suka mengajukan pertanyaan mendalam tentang teknologi kecerdasan buatan, pemrograman, dan inovasi teknologi."
+    context:
+      "Kamu adalah agen AI yang penasaran, suka mengajukan pertanyaan mendalam tentang teknologi kecerdasan buatan, pemrograman, dan inovasi teknologi.",
   },
   {
     id: "agen-2",
-    context: "Kamu adalah agen AI yang berpengetahuan luas, senang menjawab pertanyaan secara rinci tentang AI dan pemrograman, lalu mengajukan pertanyaan lanjutan yang relevan."
+    context:
+      "Kamu adalah agen AI yang berpengetahuan luas, senang menjawab pertanyaan secara rinci tentang AI dan pemrograman, lalu mengajukan pertanyaan lanjutan yang relevan.",
   },
 ];
 
@@ -52,25 +54,31 @@ async function generateResponse(agent: Agent, prompt: string): Promise<string> {
       if (done) break;
 
       const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split("\n").filter(line => line.trim());
+      const lines = chunk.split("\n").filter((line) => line.trim());
 
       for (const line of lines) {
         try {
           const data = JSON.parse(line);
           if (data.response) {
             fullResponse += data.response;
-            process.stdout.write(data.response);
+            process.stdout.write(data.response); // Cetak streaming secara bertahap
           }
         } catch (error) {
-          console.error(`Kesalahan parsing streaming untuk ${agent.id}:`, error instanceof Error ? error.message : "Kesalahan tidak diketahui");
+          console.error(
+            `Kesalahan parsing streaming untuk ${agent.id}:`,
+            error instanceof Error ? error.message : "Kesalahan tidak diketahui"
+          );
         }
       }
     }
 
-    process.stdout.write("\n");
+    process.stdout.write("\n"); // Baris baru setelah streaming selesai
     return fullResponse.trim();
   } catch (error) {
-    console.error(`Kesalahan untuk ${agent.id}:`, error instanceof Error ? error.message : "Kesalahan tidak diketahui");
+    console.error(
+      `Kesalahan untuk ${agent.id}:`,
+      error instanceof Error ? error.message : "Kesalahan tidak diketahui"
+    );
     return "Saya mengalami kesalahan, tapi mari lanjutkan. Apa selanjutnya?";
   }
 }
@@ -78,27 +86,36 @@ async function generateResponse(agent: Agent, prompt: string): Promise<string> {
 async function conversationLoop(): Promise<void> {
   let currentAgent: Agent = AGENTS[0];
   let otherAgent: Agent = AGENTS[1];
-  let lastResponse: string = "Halo! Mari mulai diskusi. Apa tren terbaru dalam pengembangan kecerdasan buatan yang menurutmu paling menarik?";
+  let lastResponse: string =
+    "Halo! Mari mulai diskusi. Apa tren terbaru dalam pengembangan kecerdasan buatan yang menurutmu paling menarik?";
 
   console.log(`${currentAgent.id}: ${lastResponse}`);
 
   while (true) {
+    // Tukar agen
     [currentAgent, otherAgent] = [otherAgent, currentAgent];
 
+    // Hasilkan respons dan pertanyaan lanjutan
     const prompt: string = `Agen lain berkata: "${lastResponse}"\n\nTanggapi pernyataan atau pertanyaan mereka, lalu ajukan pertanyaan baru untuk melanjutkan diskusi tentang teknologi AI atau pemrograman.`;
-    process.stdout.write(`${currentAgent.id}: `);
+    process.stdout.write(`${currentAgent.id}: `); // Cetak ID agen sebelum streaming
     lastResponse = await generateResponse(currentAgent, prompt);
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Jeda kecil untuk mencegah membebani API
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 }
 
-process.on('SIGINT', () => {
-  console.log('\nPercakapan dihentikan oleh pengguna.');
+// Tangani Ctrl+C dengan baik
+process.on("SIGINT", () => {
+  console.log("\nPercakapan dihentikan oleh pengguna.");
   process.exit(0);
 });
 
-conversationLoop().catch(error => {
-  console.error('Kesalahan percakapan:', error instanceof Error ? error.message : "Kesalahan tidak diketahui");
+// Mulai percakapan
+conversationLoop().catch((error) => {
+  console.error(
+    "Kesalahan percakapan:",
+    error instanceof Error ? error.message : "Kesalahan tidak diketahui"
+  );
   process.exit(1);
 });
