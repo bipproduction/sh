@@ -1,4 +1,4 @@
-sesuaikan const [host] = process.argv.slice(2);
+const [host] = process.argv.slice(2);
 if (!host) {
   throw new Error("Host is required");
 }
