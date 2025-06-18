@@ -68,9 +68,3 @@ const miniMist = (function () {
 })();
 
 export default miniMist;
-
-// Contoh penggunaan untuk Bun
-if (import.meta.main) {
-  const args = process.argv; // Ubah Bun.argv ke process.argv untuk kompatibilitas Node.js
-  console.log(miniMist(args));
-}
