@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+// cara menggunakan
+// curl -s https://cdn.jsdelivr.net/gh/bipproduction/sh/crypto-js.ts | bun -e "$(cat)"
+
 // Simulasikan objek window untuk kompatibilitas dengan skrip UMD
 const globalThisWithWindow = globalThis as any;
 globalThisWithWindow.window = globalThisWithWindow;
@@ -17,3 +20,5 @@ globalThisWithWindow.window = globalThisWithWindow;
     console.error("Error:", error);
   }
 })();
+
+
