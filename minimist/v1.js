@@ -1,4 +1,4 @@
-function minimist(args = []) {
+module.exports = function minimist(args = []) {
   const result = { _: [] };
   let i = 0;
 
