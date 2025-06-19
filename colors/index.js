@@ -52,14 +52,4 @@ Object.keys(colors).forEach(key => {
   });
 });
 
-// Export for different environments
-if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-  module.exports = colors; // CommonJS (Node.js)
-} else if (typeof window !== 'undefined') {
-  window.colors = colors; // Browser global
-}
-
-// Support ES modules if needed
-if (typeof exportDefault !== 'undefined') {
-  exportDefault = colors;
-}
+window.colors = colors;
