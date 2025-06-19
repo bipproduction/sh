@@ -2,7 +2,7 @@ const colors = {
   // Foreground colors
   black: str => `\x1b[30m${str}\x1b[0m`,
   red: str => `\x1b[31m${str}\x1b[0m`,
-  green: str => \x1b[32m${str}\x1b[0m`,
+  green: str => `\x1b[32m${str}\x1b[0m`, // Fixed syntax error
   yellow: str => `\x1b[33m${str}\x1b[0m`,
   blue: str => `\x1b[34m${str}\x1b[0m`,
   magenta: str => `\x1b[35m${str}\x1b[0m`,
@@ -33,28 +33,33 @@ const colors = {
   // Additional colors (approximations or aliases)
   grey: str => `\x1b[90m${str}\x1b[0m`, // Alias for gray
   brightRed: str => `\x1b[91m${str}\x1b[0m`,
-  brightGreen: str => `\x1b[92m${str}\x1b[0m}`,
+  brightGreen: str => `\x1b[92m${str}\x1b[0m`,
   brightYellow: str => `\x1b[93m${str}\x1b[0m`,
   brightBlue: str => `\x1b[94m${str}\x1b[0m`,
-  brightMagenta: str => \x1b[95m${str}\x1b[0m`,
+  brightMagenta: str => `\x1b[95m${str}\x1b[0m`,
   brightCyan: str => `\x1b[96m${str}\x1b[0m`,
   brightWhite: str => `\x1b[97m${str}\x1b[0m`
-];
+};
 
 // Add color and style methods to String.prototype
 Object.keys(colors).forEach(key => {
   Object.defineProperty(String.prototype, key, {
     configurable: true,
-    enumerable: true,
+    enumerable: false, // Changed to false to avoid polluting for...in loops
     get: function () {
       return colors[key](this.toString());
     }
   });
 });
 
-// Export the colors object for module usage
-if (typeof window !== "undefined") {
-  window.colors = colors;
-} else if (typeof module !== "undefined" && module.exports) {
-  module.exports = colors;
-} 
+// Export for different environments
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = colors; // CommonJS (Node.js)
+} else if (typeof window !== 'undefined') {
+  window.colors = colors; // Browser global
+}
+
+// Support ES modules if needed
+if (typeof exportDefault !== 'undefined') {
+  exportDefault = colors;
+}
