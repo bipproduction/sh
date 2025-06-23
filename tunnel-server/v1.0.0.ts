@@ -8,7 +8,7 @@
  * file:
  *  1. key.txt
  *  2. source.txt
- * jalankan crypto : curl -s https://cdn.jsdelivr.net/gh/bipproduction/sh/crypto/v1.0.0.ts | bun run - --encrypt
+ * jalankan crypto : curl -s https://cdn.jsdelivr.net/gh/bipproduction/sh/crypto/v1.0.0.ts | bun run - --decrypt
  * akan menghasilkan file encrypted.txt
  * cp encrypted.txt ke key.txt
  * cp .env.encrypted ke source.txt
@@ -61,8 +61,14 @@ const dockerFileText = await fetch(
 await fs.writeFile("Dockerfile", dockerFileText).catch(() => {});
 console.log("[INFO]", "Dockerfile created ...")
 
-const envEncryptedText = await fetch(
-  "https://cdn.jsdelivr.net/gh/bipproduction/sh/tunnel-server/.env.encrypted"
+const envEncryptedMakuroStudioText = await fetch(
+  "https://cdn.jsdelivr.net/gh/bipproduction/sh/tunnel-server/.env.encrypted.makuro-studio"
 ).then((res) => res.text());
-await fs.writeFile(".env.encrypted", envEncryptedText).catch(() => {});
-console.log("[INFO]", ".env.encrypted created ...")
+await fs.writeFile(".env.encrypted", envEncryptedMakuroStudioText).catch(() => {});
+console.log("[INFO]", ".env.encrypted makuro-studio created ...")
+
+const envEncryptedBipOfficeText = await fetch(
+  "https://cdn.jsdelivr.net/gh/bipproduction/sh/tunnel-server/.env.encrypted.bip-office"
+).then((res) => res.text());
+await fs.writeFile(".env.encrypted", envEncryptedBipOfficeText).catch(() => {});
+console.log("[INFO]", ".env.encrypted bip-office created ...")
