@@ -8,7 +8,7 @@
  * file:
  *  1. key.txt
  *  2. source.txt
- * jalankan crypto : curl -s https://cdn.jsdelivr.net/gh/bipproduction/sh/crypto/v1.0.0.ts | bun run - --decrypt
+ * jalankan crypto : curl -s https://cdn.jsdelivr.net/gh/bipproduction/sh/crypto/v1.0.0.ts | bun run - --encrypt
  * akan menghasilkan file encrypted.txt
  * cp encrypted.txt ke key.txt
  * cp .env.encrypted ke source.txt
