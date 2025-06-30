@@ -241,3 +241,80 @@ GOOGLE_AUTH_PROVIDER_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
 GOOGLE_CLIENT_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40mobile-darmasaba.iam.gserviceaccount.com
 
 ```
+
+```ts
+// Impor Firebase Admin SDK
+import { initializeApp, cert, getApp, getApps } from "firebase-admin/app";
+import { getMessaging } from "firebase-admin/messaging";
+import path from "path";
+import fs from 'fs/promises'
+
+
+const key = {
+   "type": "service_account",
+   "project_id": "mobile-darmasaba",
+   "private_key_id": "764e1207d5acf4db2eac539256c8f1bf397c7d8f",
+   "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCwCU9PBpAbXsOl\ntb1syvWrmH3FSDRyI4oOVWZJRqYX+j44UTNfzTjYySpNy7x1lr91uOC2GGHJeFvT\nLg5er6uvzFvzwg42A8Rz4+aqxlUhvhNXYRyfaaP7tbui5X9GEmhKYzvYd6T/6z1u\njo7LE1tBaiB8eB69tSJidGcr90yXOsbvKFgaPkpvlrseNR/t0PYDUaXHsxdKvCHI\ntK13KxhJCJrU9+/W1Wwr+45WGfK9m+jLVuOEZT9dd3FUgDn/0CFzykZLA0iHRLjx\neczahlrlvLVCtUIJjHbmsjG8vLZyl6/puh1l2OkEZyADb6m7OOxFVTo5ADZvj4nD\nVCCirdMVAgMBAAECggEAMF0mbnJBpltnSkA/vkOWsmHPcCOx0QgFloGM/CXOXTkR\n3hwlDrWN4DWIi14ltXLIwFmeVzkkqJsKM19scEQ4WbC+NJ7Ek79+Ok7LYXDjE8Wq\nf6+9EukNtgqMdikySfilsYZI+2SHrw4czyKYhZ+YS0USjs/btkgtHbqYW+JyJvv4\nlXAGp3129kbOHTc6+DBq6tn4XiRMKUdBNtcRHe9k+zAIuwbeAdsl4bock1ADnMIv\n/Q4FfOua+nJl8MUpPCZDvz14az+3j/rUVkR/wgDqQirFNRfFfpEPNM2oXVSjp0oK\nTC8NEy5mN4aj0DYS8U2x8barsAFDr5N4L9JxTtdlgwKBgQDkXK9iieIe1/yJFDw6\ntHbQu/bl+t82DESapss62++6ckh2mo+IScvVg/rCwXIag7IRQO40BHWwYTrOwTbj\nD1VUamn6UaqJHpIjDj/SK+As3DumuOTcb+kbJq9TpjLGeR2hj0aKcFXAjL5+B+yr\nBt7fVsB2uhouS9aD68HV8azsxwKBgQDFV2yRKgSf11vNRsxtJekpZ7ruF4h8OZPA\nHcq1kMDPRJcuVD9XwG7RAEgxcErKKS6NrrT/2Iaq5r+P3owgxZ6yB5pabGGvsgcg\nqrvsVEjzETsrrDbp5IevwE/MTwplakr6vJBnfAyjqMbDQSGSZPp+6S8M5JtZhJDL\n9Pqy6yxNQwKBgEE9ZXGuWKZdKC11VXukAOnDOVcco9ZKDPNtwVPQb52BdshDgcv6\n4Tvfl606HMIMa7vYI/VCbOj17hoRQv/9anBScnJsEF9aF3/iW0NM+591T6li2ydK\n5Xq3Q5GPQqRHB7sXNpzoWOdIjkdtNiTqMpP1sch5hG9DhUZs/RSFFdUTAoGBALyV\nyD2NXu/1WVh5cQBZe1FDPMMtIBQ+3bB5h+8tDuTEEomGnyXX0s7OKy97tS0uX7us\nGnJo1IDblHMDZPwofnh5hYsmCdBiHCeeoYm+HhyS+e3JXIz2BKjy6g8/9ZpnEpI8\nwu7yAA4iSxfq1Q9Win/fjUQP71mDsvAGA9IZpbOLAoGBAK57RjNemVh3oNB5ZaQs\n45WzfmPPjKoDQdMYLtohHz9HhPxYFLuvlDc/9OcWFCz3tZHtyDrUtXvv+vX+rG4Y\nemxXkqdg3lYo7nayw772myJb2w6QIfGyuSRx/C1/phmPhp+UkHk7B+KdvWhpPmCC\nBufws2LSn5VZzivO6LrwSCfR\n-----END PRIVATE KEY-----\n",
+   "client_email": "firebase-adminsdk-fbsvc@mobile-darmasaba.iam.gserviceaccount.com",
+   "client_id": "105653213329235865762",
+   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+   "token_uri": "https://oauth2.googleapis.com/token",
+   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40mobile-darmasaba.iam.gserviceaccount.com",
+   "universe_domain": "googleapis.com"
+ }
+ 
+
+
+// Fungsi untuk mengirim notifikasi FCM
+export async function sendFCMNotification(token: string) {
+   if(getApps().length === 0){
+      initializeApp({
+         credential: cert(key as any),
+      });
+   }
+   
+
+   try {
+      // Konfigurasi pesan
+      const message = {
+         notification: {
+            title: "Judul Notifikasi",
+            body: "Ini adalah isi notifikasi",
+         },
+         token,
+         data: {
+            key1: "value1",
+            key2: "value2",
+         },
+         // Opsional: konfigurasi Android
+         android: {
+            priority: "high",
+            notification: {
+               sound: "default",
+               channelId: "default_channel",
+            },
+         },
+         // Opsional: konfigurasi APNS (iOS)
+         apns: {
+            payload: {
+               aps: {
+                  sound: "default",
+               },
+            },
+         },
+      };
+
+      // Kirim pesan
+      const response = await getMessaging().send(message as any);
+      console.log("Notifikasi berhasil dikirim:", response);
+      return response;
+   } catch (error) {
+      console.error("Error mengirim notifikasi:", error);
+      throw error;
+   }
+}
+
+sendFCMNotification('c89yuexsS_uc1tOErVPu5a:APA91bEb6tEKXAfReZjFVJ2mMyOzoW_RXryLSnSJTpbIVV3G0L_DCNkLuRvJ02Ip-Erz88QCQBAt-C2SN8eCRxu3-v1sBzXzKPtDv-huXpkjXsyrkifqvUo')
+```
+
