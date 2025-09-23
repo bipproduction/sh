@@ -3,7 +3,7 @@ set -euo pipefail
 
 INSTALL_DIR="$HOME/.local/bin"
 SCRIPT_NAME="note"
-SCRIPT_URL="https://yourcdn.com/note.sh"
+SCRIPT_URL="https://raw.githubusercontent.com/bipproduction/sh/refs/heads/main/note/note.sh"
 
 echo "🚀 Installing $SCRIPT_NAME..."
 
